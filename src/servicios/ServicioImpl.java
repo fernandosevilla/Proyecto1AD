@@ -3,10 +3,8 @@ package servicios;
 import modelo.Contacto;
 import modelo.ListaContactos;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ServicioImpl implements Servicio {
@@ -89,6 +87,7 @@ public class ServicioImpl implements Servicio {
     @Override
     public void guardarContacto(File file, List<Contacto> listaDeContactos) {
         BufferedWriter bw = null;
+
         try {
             bw = new BufferedWriter(new FileWriter(file));
 
@@ -117,7 +116,36 @@ public class ServicioImpl implements Servicio {
      */
     @Override
     public List<Contacto> cargarContactos(File file) {
-        return List.of();
+        List<Contacto> listadoContactos = new ArrayList<>();
+        BufferedReader br = null;
+
+        try {
+            br = new BufferedReader(new FileReader(file));
+
+            String linea;
+
+            while ((linea = br.readLine()) != null) {
+                String[] palabras = linea.split("-");
+                String nombre = palabras[0].trim();
+                String telefono = palabras[1].trim();
+                listadoContactos.add(new Contacto(nombre, telefono));
+            }
+
+            contactos.setListaContactos(listadoContactos);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    System.err.println("ERROR: no se ha podido cerrar el br");
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        return listadoContactos;
     }
 
     /**

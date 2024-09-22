@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.List;
 
 
 public class Ventana {
@@ -164,7 +165,22 @@ public class Ventana {
              */
             @Override
             public void actionPerformed(ActionEvent e) {
+                JFileChooser selectorFichero = new JFileChooser();
+                int resultadoSelectorFichero = selectorFichero.showOpenDialog(null);
 
+                if (resultadoSelectorFichero == JFileChooser.APPROVE_OPTION) {
+                    File archivo = selectorFichero.getSelectedFile();
+                    List<Contacto> contactosCargados = servicio.cargarContactos(archivo);
+                    JOptionPane.showMessageDialog(panel1, "Se ha cargado el archivo", "Cargado", JOptionPane.INFORMATION_MESSAGE);
+
+                    textArea.setText(""); // limpiamos el textarea
+
+                    for (Contacto contacto : contactosCargados) {
+                        textArea.append(contacto.toString() + "\n");
+                    }
+                } else if (resultadoSelectorFichero == JFileChooser.ERROR_OPTION) {
+                    JOptionPane.showMessageDialog(panel1, "No se ha podido cargar el archivo con los datos", "ERROR", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         limpiarButton.addActionListener(new ActionListener() {
