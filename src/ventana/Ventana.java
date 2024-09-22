@@ -10,7 +10,9 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.List;
 
-
+/**
+ *
+ */
 public class Ventana {
     private JPanel panel1;
     private JTextField celdaNombre;
@@ -99,7 +101,19 @@ public class Ventana {
              */
             @Override
             public void actionPerformed(ActionEvent e) {
+                String nombre = celdaNombre.getText();
+                String telefono = celdaTelefono.getText();
 
+                if (nombre.isEmpty() || telefono.isEmpty()) {
+                    textArea.setText("");
+                    textArea.append("No has escrito o el nombre o el numero de telefono");
+                } else {
+                    Contacto contactoEditado = new Contacto(nombre, telefono);
+                    if (servicio.editarContacto(contactoEditado)) {
+                        textArea.setText("");
+                        textArea.append(contactoEditado.toString());
+                    }
+                }
             }
         });
 

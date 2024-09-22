@@ -5,6 +5,9 @@ import modelo.Contacto;
 import java.io.File;
 import java.util.List;
 
+/**
+ *
+ */
 public interface Servicio {
     /**
      *

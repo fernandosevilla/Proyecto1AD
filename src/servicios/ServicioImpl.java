@@ -7,9 +7,15 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *
+ */
 public class ServicioImpl implements Servicio {
     ListaContactos contactos;
 
+    /**
+     *
+     */
     public ServicioImpl() {
         contactos = new ListaContactos();
     }
@@ -76,6 +82,15 @@ public class ServicioImpl implements Servicio {
      */
     @Override
     public boolean editarContacto(Contacto contacto) {
+        int posicion = posicionContacto(contacto.getNombre());
+
+        if (posicion != -1) {
+            // obtienemos la posicion del contacto que vamos a editar
+            Contacto contactoParaEditar = contactos.getListaContactos().get(posicion);
+            contactoParaEditar.setNumeroTelefono(contacto.getNumeroTelefono());
+            return true;
+        }
+
         return false;
     }
 

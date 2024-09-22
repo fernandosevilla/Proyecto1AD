@@ -1,19 +1,17 @@
 package modelo;
 
+/**
+ * clase para crear contactos
+ */
 public class Contacto {
     private String nombre;
     private String numeroTelefono;
 
-    /**
-     *
-     */
-    public Contacto() {
-    }
 
     /**
-     *
-     * @param nombre
-     * @param numeroTelefono
+     * Creamos un constructor con el nombre y el telefono de cada contacto
+     * @param nombre el nombre del contacto
+     * @param numeroTelefono el numero de telefono del contacto
      */
     public Contacto(String nombre, String numeroTelefono) {
         this.nombre = nombre;
@@ -21,40 +19,40 @@ public class Contacto {
     }
 
     /**
-     *
-     * @return
+     * metodo para obtener el nombre de un contacto
+     * @return el nombre de contacto
      */
     public String getNombre() {
         return nombre;
     }
 
     /**
-     *
-     * @param nombre
+     * metodo para poder cambiar el nombre de algun contacto (ACTUALMENTE EN DESUSO)
+     * @param nombre : el nombre por el que queremos cambiar
      */
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
 
     /**
-     *
-     * @return
+     * metodo para obtener el numero de telefono de un contacto
+     * @return el numero de telefono del contacto
      */
     public String getNumeroTelefono() {
         return numeroTelefono;
     }
 
     /**
-     *
-     * @param numeroTelefono
+     * metodo par poder cambiar el numero de telefono de algun contacto
+     * @param numeroTelefono : el numero de telefono por el que queremos cambiar
      */
     public void setNumeroTelefono(String numeroTelefono) {
         this.numeroTelefono = numeroTelefono;
     }
 
     /**
-     *
-     * @return
+     * metodo para mostrar la informacion de un contacto
+     * @return una cadena con la informacion de un contacto
      */
     @Override
     public String toString() {
