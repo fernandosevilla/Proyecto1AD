@@ -2,6 +2,7 @@ package ventana;
 
 import modelo.Contacto;
 import modelo.ListaContactos;
+import servicios.Servicio;
 import servicios.ServicioImpl;
 
 import javax.swing.*;
@@ -25,7 +26,7 @@ public class Ventana {
     private JButton guardarButton;
     private JButton cargarButton;
     private JButton limpiarButton;
-    ServicioImpl servicio;
+    Servicio servicio;
     ListaContactos test;
 
     /**
@@ -133,7 +134,7 @@ public class Ventana {
                     textArea.append("No has escrito el nombre");
                     // System.out.println("No se ha eliminado");
                 } else {
-                    Contacto contacto = new Contacto(celdaNombre.getText(), telefono);
+                    Contacto contacto = new Contacto(nombre, telefono);
 
                     if (servicio.eliminarContacto(contacto)) {
                         textArea.setText("");

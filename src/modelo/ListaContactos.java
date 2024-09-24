@@ -25,8 +25,8 @@ public class ListaContactos {
     }
 
     /**
-     * metodo
-     * @param listaContactos
+     * metodo para poder cambiar la lista de contactos
+     * @param listaContactos la lista que le pasamos para que se cambie a esta
      */
     public void setListaContactos(List<Contacto> listaContactos) {
         this.listaContactos = listaContactos;
