@@ -6,8 +6,11 @@ import servicios.Servicio;
 import servicios.ServicioImpl;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.List;
 
@@ -26,6 +29,8 @@ public class Ventana {
     private JButton guardarButton;
     private JButton cargarButton;
     private JButton limpiarButton;
+    private JTable jtTabla;
+    private DefaultTableModel modeloTabla;
     Servicio servicio;
     ListaContactos test;
 
@@ -35,6 +40,16 @@ public class Ventana {
     public Ventana() {
         servicio = new ServicioImpl();
         test = new ListaContactos();
+
+        modeloTabla = new DefaultTableModel(new String[] {"Nombre", "Telefono"}, 0) {
+            // sobreescribimos el metodo para que no se pueda editar directamente desde la tabla un contacto
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        jtTabla.setModel(modeloTabla);
+
         añadirButton.addActionListener(new ActionListener() {
             /**
              * Invoked when an action occurs.
@@ -47,26 +62,22 @@ public class Ventana {
                 String telefono = celdaTelefono.getText();
 
                 if (nombre.isEmpty() || telefono.isEmpty()) {
-                    textArea.setText("");
-                    textArea.append("No has escrito o el nombre o el numero de telefono");
-                    // System.out.println("No se ha añadido");
+                    JOptionPane.showMessageDialog(panel1, "El campo de nombre o telefono está vacío",
+                            "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
                     Contacto nuevoContacto = new Contacto(nombre, telefono);
                     if (servicio.aniadirContacto(nuevoContacto)) {
-                        textArea.setText("");
-                        textArea.append(nuevoContacto.toString());
-                        // recorrerLosContactos();
+                        modeloTabla.addRow(new Object[] {nombre, telefono});
                     } else {
-                        textArea.setText("");
-                        textArea.append("No se ha podido añadir el contacto");
-                        System.out.println("No se ha añadido");
+                        JOptionPane.showMessageDialog(panel1, "El contacto que has intentado crear ya existe",
+                                "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
 
-                celdaNombre.setText("");
-                celdaTelefono.setText("");
+                limpiarCeldas();
             }
         });
+
         consultarButton.addActionListener(new ActionListener() {
             /**
              * Invoked when an action occurs.
@@ -78,22 +89,29 @@ public class Ventana {
                 String nombre = celdaNombre.getText();
 
                 if (nombre.isEmpty()) {
-                    textArea.setText("");
-                    textArea.append("No has escrito el nombre");
+                    JOptionPane.showMessageDialog(panel1,
+                            "El campo de nombre del contacto que quieres editar está vacío",
+                            "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
                     Contacto contacto = servicio.consultarContacto(nombre);
 
                     if (contacto != null) {
-                        textArea.setText("");
-                        textArea.append(contacto.toString());
+                        for (int i = 0; i < modeloTabla.getRowCount(); i++) {
+                            if (modeloTabla.getValueAt(i, 0).equals(nombre)) {
+                                jtTabla.setRowSelectionInterval(i, i);
+                            }
+                        }
                     } else {
-                        textArea.setText("");
-                        textArea.append("No se ha podido consultar el contacto");
+                        JOptionPane.showMessageDialog(panel1,
+                                "El contacto que quieres consultar no existe",
+                                "Error", JOptionPane.ERROR_MESSAGE);
                     }
 
                 }
+                limpiarCeldas();
             }
         });
+
         editarButton.addActionListener(new ActionListener() {
             /**
              * Invoked when an action occurs.
@@ -106,13 +124,24 @@ public class Ventana {
                 String telefono = celdaTelefono.getText();
 
                 if (nombre.isEmpty() || telefono.isEmpty()) {
-                    textArea.setText("");
-                    textArea.append("No has escrito o el nombre o el numero de telefono");
+                    JOptionPane.showMessageDialog(panel1,
+                            "No has escrito el nombre o el telefono",
+                            "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
                     Contacto contactoEditado = new Contacto(nombre, telefono);
                     if (servicio.editarContacto(contactoEditado)) {
-                        textArea.setText("");
-                        textArea.append(contactoEditado.toString());
+                        for (int i = 0; i < modeloTabla.getRowCount(); i++) {
+                            if (modeloTabla.getValueAt(i, 0).equals(nombre)) {
+                                modeloTabla.setValueAt(telefono, i, 1);
+                            }
+                        }
+                        JOptionPane.showMessageDialog(panel1,
+                                "Contacto editado",
+                                "Editar", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(panel1,
+                                "No se ha encontrado el contacto que se quería editar",
+                                "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
@@ -130,28 +159,35 @@ public class Ventana {
                 String telefono = celdaTelefono.getText();
 
                 if (nombre.isEmpty()) {
-                    textArea.setText("");
-                    textArea.append("No has escrito el nombre");
-                    // System.out.println("No se ha eliminado");
+                    JOptionPane.showMessageDialog(panel1,
+                            "No has escrito el nombre",
+                            "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
                     Contacto contacto = new Contacto(nombre, telefono);
 
                     if (servicio.eliminarContacto(contacto)) {
-                        textArea.setText("");
-                        textArea.setText("Contacto eliminado");
-                        // recorrerLosContactos();
+                        for (int i = 0; i < modeloTabla.getRowCount(); i++) {
+                            if (modeloTabla.getValueAt(i, 0).equals(nombre)) {
+                                modeloTabla.removeRow(i);
+                            }
+                        }
+                        JOptionPane.showMessageDialog(panel1,
+                                "Contacto eliminado",
+                                "Eliminar",
+                                JOptionPane.INFORMATION_MESSAGE);
 
                     } else {
-                        textArea.setText("");
-                        textArea.setText("El contacto que has escrito no existe");
-                        // recorrerLosContactos();
+                        JOptionPane.showMessageDialog(panel1,
+                                "No se ha encontrado el contacto que se quiere eliminar",
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE);
                     }
                 }
 
-                celdaNombre.setText("");
-                celdaTelefono.setText("");
+                limpiarCeldas();
             }
         });
+
         guardarButton.addActionListener(new ActionListener() {
             /**
              * Invoked when an action occurs.
@@ -172,6 +208,7 @@ public class Ventana {
                 }
             }
         });
+
         cargarButton.addActionListener(new ActionListener() {
             /**
              * Invoked when an action occurs.
@@ -186,18 +223,29 @@ public class Ventana {
                 if (resultadoSelectorFichero == JFileChooser.APPROVE_OPTION) {
                     File archivo = selectorFichero.getSelectedFile();
                     List<Contacto> contactosCargados = servicio.cargarContactos(archivo);
-                    JOptionPane.showMessageDialog(panel1, "Se ha cargado el archivo", "Cargado", JOptionPane.INFORMATION_MESSAGE);
+                    modeloTabla.setRowCount(0);
 
-                    textArea.setText(""); // limpiamos el textarea
-
-                    for (Contacto contacto : contactosCargados) {
-                        textArea.append(contacto.toString() + "\n");
+                    if (!contactosCargados.isEmpty()) {
+                        for (Contacto contacto : contactosCargados) {
+                            modeloTabla.addRow(new Object[]{contacto.getNombre(), contacto.getNumeroTelefono()});
+                        }
+                        JOptionPane.showMessageDialog(panel1,
+                                "Se ha cargado el archivo",
+                                "Cargado",
+                                JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(panel1,
+                                "El archivo esta vacio",
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE);
                     }
+
                 } else if (resultadoSelectorFichero == JFileChooser.ERROR_OPTION) {
                     JOptionPane.showMessageDialog(panel1, "No se ha podido cargar el archivo con los datos", "ERROR", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
+
         limpiarButton.addActionListener(new ActionListener() {
             /**
              * Invoked when an action occurs.
@@ -206,9 +254,30 @@ public class Ventana {
              */
             @Override
             public void actionPerformed(ActionEvent e) {
-                textArea.setText("");
+                // textArea.setText("");
                 celdaTelefono.setText("");
                 celdaNombre.setText("");
+            }
+        });
+
+        jtTabla.addMouseListener(new MouseAdapter() {
+            /**
+             * {@inheritDoc}
+             *
+             * @param e
+             */
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int fila = jtTabla.getSelectedRow(); // la fila que se selecciona
+
+                // asegurarnos que hay una fila seleccionada
+                if (fila != -1) {
+                    String nombre = modeloTabla.getValueAt(fila, 0).toString();
+                    String telefono = modeloTabla.getValueAt(fila, 1).toString();
+
+                    celdaNombre.setText(nombre);
+                    celdaTelefono.setText(telefono);
+                }
             }
         });
     }
@@ -232,4 +301,9 @@ public class Ventana {
         }
     }
     */
+
+    private void limpiarCeldas() {
+        celdaNombre.setText("");
+        celdaTelefono.setText("");
+    }
 }
