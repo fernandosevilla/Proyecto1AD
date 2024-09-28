@@ -7,7 +7,7 @@ import java.util.List;
  * clase en la que se crea una lista de contactos
  */
 public class ListaContactos {
-    private List<Contacto> listaContactos = new ArrayList<Contacto>();
+    private List<Contacto> listaContactos = new ArrayList<>();
 
     /**
      * constructor vacio
