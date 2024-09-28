@@ -30,9 +30,11 @@ public class Contacto {
      * metodo para poder cambiar el nombre de algun contacto (ACTUALMENTE EN DESUSO)
      * @param nombre : el nombre por el que queremos cambiar
      */
+    /*
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
+     */
 
     /**
      * metodo para obtener el numero de telefono de un contacto
@@ -54,6 +56,7 @@ public class Contacto {
      * metodo para mostrar la informacion de un contacto
      * @return una cadena con la informacion de un contacto
      */
+   /*
     @Override
     public String toString() {
         return "Contacto{" +
@@ -61,4 +64,5 @@ public class Contacto {
                 ", numeroTelefono='" + numeroTelefono + '\'' +
                 '}';
     }
+    */
 }

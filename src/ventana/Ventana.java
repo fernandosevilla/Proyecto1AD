@@ -1,9 +1,6 @@
 package ventana;
 
 import controlador.Controlador;
-import modelo.ListaContactos;
-import servicios.Servicio;
-import servicios.ServicioImpl;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -28,8 +25,6 @@ public class Ventana {
     private JButton limpiarButton;
     private JTable jtTabla;
     private final DefaultTableModel modeloTabla;
-    Servicio servicio;
-    ListaContactos test;
     Controlador controlador;
 
     public JPanel getPanel1() {
@@ -52,24 +47,35 @@ public class Ventana {
     }
 
     public Ventana() {
-        servicio = new ServicioImpl();
-        test = new ListaContactos();
         controlador = new Controlador();
 
+        /*
+            creamos el DefaultTableModel y le pasamos la cabecera (nombres de las columnas)
+            y 0 para que no coja filas de primeras
+         */
         modeloTabla = new DefaultTableModel(new String[] {"Nombre", "Telefono"}, 0) {
-            // sobreescribimos el metodo para que no se pueda editar directamente desde la tabla un contacto
+            /**
+             * Metodo que sobreescribimos para no poder editar los contactos dando
+             * doble click sobre una fila de la tabla
+             * @param row la fila
+             * @param column la columna
+             * @return false para que no se puedan editar
+             */
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
+        // asignamos la tabla con el modelo de la tabla
         jtTabla.setModel(modeloTabla);
 
         añadirButton.addActionListener(new ActionListener() {
             /**
-             * Invoked when an action occurs.
+             * Cuando se invoca (le das click a añadir) pues
+             * llama a los metodos agregarContacto y 
+             * limpiarCeldas de controlador
              *
-             * @param e the event to be processed
+             * @param e el evento que hace
              */
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -81,9 +87,11 @@ public class Ventana {
 
         consultarButton.addActionListener(new ActionListener() {
             /**
-             * Invoked when an action occurs.
+             * Cuando se invoca (le das click a consultar) pues
+             * llama al metodo de consultar el contacto
+             * de la clase controlador
              *
-             * @param e the event to be processed
+             * @param e el evento que hace
              */
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -93,9 +101,11 @@ public class Ventana {
 
         editarButton.addActionListener(new ActionListener() {
             /**
-             * Invoked when an action occurs.
+             * Cuando se invoca (le das click a editar) pues
+             * llama a los metodos de editar y de limpiar las celdas
+             * de la clase controlador
              *
-             * @param e the event to be processed
+             * @param e el evento que hace
              */
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -106,9 +116,11 @@ public class Ventana {
 
         eliminarButton.addActionListener(new ActionListener() {
             /**
-             * Invoked when an action occurs.
+             * Cuando se invoca (le das click a editar) pues
+             * llama a los metodos eliminar contacto y limpiar
+             * las celdas de la clase controlador
              *
-             * @param e the event to be processed
+             * @param e el evento que hace
              */
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -119,9 +131,11 @@ public class Ventana {
 
         guardarButton.addActionListener(new ActionListener() {
             /**
-             * Invoked when an action occurs.
+             * Cuando se invoca (le das click a editar) pues
+             * llama al metodo guardar contacto de la clase
+             * controlador
              *
-             * @param e the event to be processed
+             * @param e el evento que hace
              */
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -131,9 +145,11 @@ public class Ventana {
 
         cargarButton.addActionListener(new ActionListener() {
             /**
-             * Invoked when an action occurs.
+             * Cuando se invoca (le das click a editar) pues
+             * llama al metodo cargar contactos de la clase
+             * controlador
              *
-             * @param e the event to be processed
+             * @param e el evento que hace
              */
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -143,9 +159,11 @@ public class Ventana {
 
         limpiarButton.addActionListener(new ActionListener() {
             /**
-             * Invoked when an action occurs.
+             * Cuando se invoca (le das click a editar) pues
+             * llama al metodo limpiar celdas de la clase
+             * controlador
              *
-             * @param e the event to be processed
+             * @param e el evento que hace
              */
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -155,9 +173,12 @@ public class Ventana {
 
         jtTabla.addMouseListener(new MouseAdapter() {
             /**
-             * {@inheritDoc}
+             * modificamos el evento de hacer click con el raton para que cuando
+             * se haga click en una fila de la tabla pues se pongas los datos
+             * de nombre en la celda nombre y el del telefono pues en la celda
+             * del telefono
              *
-             * @param e
+             * @param e el evento que hace
              */
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -165,20 +186,20 @@ public class Ventana {
 
                 // asegurarnos que hay una fila seleccionada
                 if (fila != -1) {
+                    // coge el valor que hay de la columna 0 (el nombre) en la fila que se selecciona
                     String nombre = modeloTabla.getValueAt(fila, 0).toString();
+                    // coge el valor que hay de la columna 1 (el telefono) en la fila que se selecciona
                     String telefono = modeloTabla.getValueAt(fila, 1).toString();
 
+                    // establecemos en la celda el nombre que se ha cogido haciendo click en la fila de la tabla
                     celdaNombre.setText(nombre);
+                    // establecemos en la celda el telefono que se ha cogido haciendo click en la fila de la tabla
                     celdaTelefono.setText(telefono);
                 }
             }
         });
     }
 
-    /**
-     *
-     * @param args
-     */
     public static void main(String[] args) {
         JFrame frame = new JFrame("Contactos");
         frame.setContentPane(new Ventana().panel1);
